@@ -1,7 +1,7 @@
 # SoundSphere-Server
 Backend of the SoundSphere application
 
-INSTALL
+**INSTALLATION**
 
 Clone the repository locally
 
