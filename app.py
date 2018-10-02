@@ -1,26 +1,12 @@
 #!flask/bin/python
 from flask import *
+from utils.db import get_albums_db
 
 app = Flask(__name__)
 
-albums = [
-    {
-        'id': 1,
-        'title': u'Kind of Blue',
-        'artist': u'Miles Davis',
-        'release': 1958
-    },
-    {
-        'id': 2,
-        'title': u'Voodoo',
-        'artist': u'D\'Angelo',
-        'release': 1999
-    }
-]
-
 @app.route('/api/albums', methods=['GET'])
 def get_albums():
-    return jsonify({'albums': albums})
+    return jsonify({'albums': get_albums_db()})
 
 @app.route('/api/album/<int:album_id>', methods=['GET'])
 def get_album_by_id(album_id):
