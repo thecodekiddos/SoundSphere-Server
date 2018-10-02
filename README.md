@@ -9,8 +9,6 @@ Clone the repository locally
 
 Download [Python3](https://www.python.org/downloads/release/python-370/)
 
-Import depended packages using pip.
-
 Import [Flask](http://flask.pocoo.org)
 
 `pip install Flask`
