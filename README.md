@@ -1,15 +1,13 @@
 # SoundSphere-Server
 Backend of the SoundSphere application
 
-INSTALL
+**INSTALLATION**
 
 Clone the repository locally
 
 `git clone https://github.com/thecodekiddos/SoundSphere-Server.git`
 
 Download [Python3](https://www.python.org/downloads/release/python-370/)
-
-Import depended packages using pip.
 
 Import [Flask](http://flask.pocoo.org)
 
