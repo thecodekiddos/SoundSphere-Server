@@ -18,6 +18,6 @@ Import [Flask](http://flask.pocoo.org)
 Flask will be the RESTful API framework used for this Backend
 
 Before beginning any development activate the virtual environment with the command:
-`source /venv/bin/activate`
+`source venv/bin/activate`
 When finished simply use:
 `deactivate`

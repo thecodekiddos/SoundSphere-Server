@@ -1,8 +1,11 @@
 #!flask/bin/python
-from flask import *
-from utils.db import get_albums_db
+from app.utils.db import get_albums_db
+from app import app
+from flask import jsonify
 
-app = Flask(__name__)
+@app.route('/')
+def home():
+    return 'Welcome to SoundSphere!'
 
 @app.route('/api/albums', methods=['GET'])
 def get_albums():
@@ -34,4 +37,4 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    SoundSphere.run(debug=True)
