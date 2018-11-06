@@ -9,7 +9,7 @@ Clone the repository locally
 
 Download [Python3](https://www.python.org/downloads/release/python-370/)
 
-Import [Flask](http://flask.pocoo.org)
+Import [Flask](http://flask.pocoo.org):
 
 `pip install Flask`
 
