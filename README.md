@@ -12,6 +12,7 @@ Download [Python3](https://www.python.org/downloads/release/python-370/)
 Import [Flask](http://flask.pocoo.org):
 
 `pip install Flask`
+`pip install python-dotenv`
 
 Flask will be the RESTful API framework used for this Backend
 
@@ -19,3 +20,6 @@ Before beginning any development activate the virtual environment with the comma
 `source venv/bin/activate`
 When finished simply use:
 `deactivate`
+
+To run the server:
+`flask run`
