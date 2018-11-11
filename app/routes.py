@@ -1,7 +1,7 @@
 #!flask/bin/python
 from app.utils.db import get_albums_db
 from app import app
-from flask import jsonify
+from flask import jsonify, make_response
 
 @app.route('/')
 def home():
