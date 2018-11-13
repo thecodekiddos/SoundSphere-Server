@@ -1,7 +1,7 @@
 #!flask/bin/python
 from app.utils.db import get_albums_db
 from app import app
-from flask import jsonify, make_response
+from flask import json, make_response, Response
 
 @app.route('/')
 def home():
@@ -9,7 +9,11 @@ def home():
 
 @app.route('/api/albums', methods=['GET'])
 def get_albums():
-    return jsonify({'albums': get_albums_db()})
+    js = json.dumps({'albums': get_albums_db()})
+    resp = Response(js, status=200, mimetype='application/json')
+    resp.headers['Access-Control-Allow-Origin'] = '*'
+    return resp
+
 
 @app.route('/api/album/<int:album_id>', methods=['GET'])
 def get_album_by_id(album_id):
