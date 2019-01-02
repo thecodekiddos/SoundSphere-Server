@@ -1,6 +1,8 @@
 # SoundSphere-Server
-Backend of the SoundSphere application
+Welcome to the Soundsphere backend where the shared vinyl/LP collection of James and Connor is stored. This RESTful API is intended to create, update, and manage all things regarding the collection. We draw our vinyl/LP data from the Discogs API. We want to create a shared space for our physical collection to live online so we can share it with friends and family online. Our desire is to create a platform for other people to host their shared collections as well.
 
+# Getting Started
+The instructions below will get you up and running to develop the server and make a shared collection of your own!
 **INSTALLATION**
 
 Clone the repository locally
@@ -23,3 +25,18 @@ When finished simply use:
 
 To run the server:
 `flask run`
+
+# Deployment
+TBD
+
+# Built With
+- [Flask](http://flask.pocoo.org): Flask python framework
+- [Discogs](https://www.discogs.com/developers/#): Discogs API
+
+## License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Authors
+
+* **Connor Sheedy** - *Initial work*
+* **James Viall** - *Initial work*
