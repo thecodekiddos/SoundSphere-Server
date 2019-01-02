@@ -11,10 +11,7 @@ Clone the repository locally
 
 Download [Python3](https://www.python.org/downloads/release/python-370/)
 
-Import [Flask](http://flask.pocoo.org):
-
-`pip install Flask`
-`pip install python-dotenv`
+Run the setup file `python setup.py install` for dependencies.
 
 Flask will be the RESTful API framework used for this Backend
 
