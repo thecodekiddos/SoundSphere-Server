@@ -1,6 +1,8 @@
-from flask import app, jsonify, request, abort, make_response, Response, json
+from flask import abort, Response, json
 from soundsphere.db import get_albums_db
-from flask_restful import Resource, reqparse, fields, marshal_with
+from flask_restplus import Resource, reqparse, fields, marshal_with, Namespace
+
+api = Namespace('albums', description='Operations related to albums in collection')
 
 # ALBUM TEST DATA
 ALBUMS = get_albums_db()
@@ -25,14 +27,9 @@ resource_fields = {
 #     if album_id not in ALBUMS:
 #         abort(404, message="Album {} doesn't exist")
 
-
-
-class Landing(Resource):
-    def get(self):
-        return "Welcome to SoundSphere"
-
-
+@api.route('/')
 class Albums(Resource):
+    @api.doc('get_albums')
     def get(self):
         if ALBUMS is None:
             return abort(404, message="No albums exist in this collection")
@@ -41,6 +38,7 @@ class Albums(Resource):
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
+    @api.doc('post_albums')
     def post(self):
         args = parser.parse_args()
         album_id = int(max(ALBUMS.keys()).lstrip('album')) + 1
@@ -56,7 +54,9 @@ class Albums(Resource):
 
 
 # Specifies a list of all albums
+@api.route('/<string:album_id>')
 class Album(Resource):
+    @api.doc('get_album_by_id')
     @marshal_with(resource_fields)
     def get(self, album_id):
         js = json.dumps(ALBUMS[album_id])
@@ -64,6 +64,7 @@ class Album(Resource):
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
+    @api.doc('delete_album_by_id')
     def delete(self, album_id):
         if ALBUMS[album_id] is None:
             return 204
@@ -72,6 +73,7 @@ class Album(Resource):
         resp.headers['Access-Control-Allow-Origin'] = '*'
         return '', 204
 
+    @api.doc('put_album_by_id')
     @marshal_with(resource_fields)
     def put(self, album_id):
         args = parser.parse_args()
