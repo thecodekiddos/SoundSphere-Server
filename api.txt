@@ -1,0 +1,2 @@
+GET album:
+-path: /home/
