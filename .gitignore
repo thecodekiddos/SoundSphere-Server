@@ -121,6 +121,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
+# Idea
+.idea
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 

@@ -1,0 +1,2 @@
+include soundsphere/schema.sql
+global-exclude *.pyc
