@@ -1,28 +1,32 @@
-from flask import abort, Response, json, request, jsonify
+from flask import abort, Response, json, request
 from flask_restplus import Resource, reqparse, fields, Namespace, marshal
-from ..database.db import Album, db, get_album, create, get_all_albums
+from ..database.db import Album, db, get_album, add_album, get_all_albums, update_album, delete_album
+import copy
 
 api = Namespace('albums', description='Operations related to albums in collection')
 
 
 # Argument Parser - Data validation
 parser = reqparse.RequestParser()
-parser.add_argument('title', required=True, help="Album title")
-parser.add_argument('artist', required=True, help="Artist of the album")
-parser.add_argument('release', help="Release of the album")
+parser.add_argument('title', help="Album title")
+parser.add_argument('artist', help="Artist of the album")
+parser.add_argument('year', help="Release of the album")
+parser.add_argument('barcode', help="Release of the album")
+parser.add_argument('catno', help="Release of the album")
+parser.add_argument('notes', help="Release of the album")
 
 # Resource fields - uses marshal with for data validation
-album = api.model('Albums', {
-    'title': fields.String,
-    'artist': fields.String,
-    # update below to be DateTime
-    'release': fields.String
-})
+# album = api.model('Albums', {
+#     'title': fields.String,
+#     'artist': fields.String,
+#     # update below to be DateTime
+#     'release': fields.String
+# })
 
 
 # Error handling
 def abort_if_album_doesnt_exist(id):
-    if album not in get_album(id):
+    if get_album(id) is None:
         api.abort(404, message="Album " + id + " doesn't exist")
 
 
@@ -46,7 +50,7 @@ class Albums(Resource):
     @api.doc('post_albums')
     def post(self):
         data = request.form.to_dict(flat=True)
-        album_to_add = create(data)
+        album_to_add = add_album(data)
         js = json.dumps(album_to_add)
         resp = Response(js, status=201, mimetype='application/json')
         return resp
@@ -66,22 +70,19 @@ class Album(Resource):
         return resp
 
     @api.doc('delete_album_by_id')
-    def delete(self, album_id):
-        if ALBUMS[album_id] is None:
-            return 204
-        del ALBUMS[album_id]
+    def delete(self, id):
+        delete_album(id)
         return '', 204
 
     @api.doc('put_album_by_id')
-    @api.marshal_with(album)
-    def put(self, album_id):
-        abort_if_album_doesnt_exist(album_id)
+    # @api.marshal_with(album)
+    def put(self, id):
         args = parser.parse_args()
-        album_updated = {'title': args['title'],
-                         'artist': args['artist'],
-                         'release': args['release'],
-                        }
-        ALBUMS[album_id] = album_updated
-        js = json.dumps(album_updated)
+        update = copy.copy(args)
+        for k, v in args.items():
+            if v is None:
+                del update[k]
+        album_to_update = update_album(update, id)
+        js = json.dumps(album_to_update)
         resp = Response(js, status=201, mimetype='application/json')
         return resp

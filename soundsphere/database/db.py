@@ -6,6 +6,7 @@ db = SQLAlchemy()
 
 albums_list = list
 
+
 def init_app(app):
     db.init_app(app)
 
@@ -50,6 +51,12 @@ class User(db.Model):
     password = db.Column(db.String)
 
 
+def get_all_albums():
+    query = (Album.query.order_by(Album.title))
+    albums = albums_list(map(from_sql, query.all()))
+    return albums
+
+
 def get_album(id):
     result = Album.query.get(id)
     if not result:
@@ -57,17 +64,24 @@ def get_album(id):
     return from_sql(result)
 
 
-def create(data):
+def add_album(data):
     album = Album(**data)
     db.session.add(album)
     db.session.commit()
     return from_sql(album)
 
 
-def get_all_albums():
-    query = (Album.query.order_by(Album.title))
-    albums = albums_list(map(from_sql, query.all()))
-    return albums
+def delete_album(id):
+    Album.query.filter_by(id=id).delete()
+    db.session.commit()
+
+
+def update_album(data, id):
+    album = Album.query.get(id)
+    for k, v in data.items():
+        setattr(album, k, v)
+    db.session.commit()
+    return from_sql(album)
 
 
 def _create_database():
