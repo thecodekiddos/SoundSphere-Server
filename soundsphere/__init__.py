@@ -1,38 +1,26 @@
 import os
+import logging
 
 from flask import Flask
-from flask_restful import Api
-#Gross change this
-from .api.api import Landing, Albums, Album
+from flask_restplus import Api
 
 
-def create_app(test_config=None):
+def create_app():
+    # Create Flask App
     app = Flask(__name__, instance_relative_config=True)
-    api = Api(app)
-    app.config.from_mapping(
-        SECRET_KEY='dev',
-        DATABASE=os.path.join(app.instance_path, 'app.sqlite'),
-    )
-    # db setup
-    # from . import db
-    # db.init_app(app)
 
-    # setup REST_api
-    api.add_resource(Landing, '/')
-    api.add_resource(Albums, '/api/albums', endpoint="albums")
-    api.add_resource(Album, '/api/album/<string:album_id>', endpoint='album_id')
+    # Set up app config
+    # load the instance config, if it exists, when not testing
+    app.config.from_pyfile('config.py', silent=True)
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+    # Create Database
+    from soundsphere.database.db import db
+    with app.app_context():
+        db.init_app(app)
 
-    # ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
+    # Create Routes
+    from .api.albums import api as album_api
+    api = Api(app, version='1.0.0', title='SoundSphere', description='A collection of shared records.')
+    api.add_namespace(album_api)
 
     return app
