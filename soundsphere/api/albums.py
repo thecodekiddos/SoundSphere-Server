@@ -1,11 +1,9 @@
-from flask import abort, Response, json
-from soundsphere.db import get_albums_db
-from flask_restplus import Resource, reqparse, fields, marshal_with, Namespace
+from flask import abort, Response, json, request, jsonify
+from flask_restplus import Resource, reqparse, fields, Namespace, marshal
+from ..database.db import Album, db, get_album, create, get_all_albums
 
 api = Namespace('albums', description='Operations related to albums in collection')
 
-# ALBUM TEST DATA
-ALBUMS = get_albums_db()
 
 # Argument Parser - Data validation
 parser = reqparse.RequestParser()
@@ -14,54 +12,57 @@ parser.add_argument('artist', required=True, help="Artist of the album")
 parser.add_argument('release', help="Release of the album")
 
 # Resource fields - uses marshal with for data validation
-resource_fields = {
+album = api.model('Albums', {
     'title': fields.String,
     'artist': fields.String,
     # update below to be DateTime
-    'release': fields.String,
-    #'uri': fields.Url('album_id')
-}
+    'release': fields.String
+})
 
 
-# def abort_if_album_doesnt_exist(album_id):
-#     if album_id not in ALBUMS:
-#         abort(404, message="Album {} doesn't exist")
+# Error handling
+def abort_if_album_doesnt_exist(id):
+    if album not in get_album(id):
+        api.abort(404, message="Album " + id + " doesn't exist")
+
 
 @api.route('/')
+@api.response(404, 'Albums not found')
+@api.header('Access-Control-Allow-Origin')
 class Albums(Resource):
-    @api.doc('get_albums')
+    @api.doc('get_albums',
+             responses={
+                200: 'Success',
+                500: 'Internal Server Error'
+             })
     def get(self):
-        if ALBUMS is None:
+        albums = get_all_albums()
+        if albums is None:
             return abort(404, message="No albums exist in this collection")
-        js = json.dumps(ALBUMS)
-        resp = Response(js, status=200, mimetype='application/json')
-        resp.headers['Access-Control-Allow-Origin'] = '*'
+        js = json.dumps(albums)
+        resp = Response(js, status=200)
         return resp
 
     @api.doc('post_albums')
     def post(self):
-        args = parser.parse_args()
-        album_id = int(max(ALBUMS.keys()).lstrip('album')) + 1
-        album_id = 'album%i' % album_id
-        ALBUMS[album_id] = {'title': args['title'],
-                            'artist': args['artist'],
-                            'release': args['release'],
-                            }
-        js = json.dumps(ALBUMS[album_id])
+        data = request.form.to_dict(flat=True)
+        album_to_add = create(data)
+        js = json.dumps(album_to_add)
         resp = Response(js, status=201, mimetype='application/json')
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
 
 # Specifies a list of all albums
-@api.route('/<string:album_id>')
+@api.route('/<id>')
+@api.param('id', 'album identifier')
+@api.response(404, 'Album not found')
+@api.header('Access-Control-Allow-Origin')
 class Album(Resource):
     @api.doc('get_album_by_id')
-    @marshal_with(resource_fields)
-    def get(self, album_id):
-        js = json.dumps(ALBUMS[album_id])
+    def get(self, id):
+        album_from_db = get_album(id)
+        js = json.dumps(album_from_db)
         resp = Response(js, status=201, mimetype='application/json')
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return resp
 
     @api.doc('delete_album_by_id')
@@ -69,20 +70,18 @@ class Album(Resource):
         if ALBUMS[album_id] is None:
             return 204
         del ALBUMS[album_id]
-        resp = Response('', status=201)
-        resp.headers['Access-Control-Allow-Origin'] = '*'
         return '', 204
 
     @api.doc('put_album_by_id')
-    @marshal_with(resource_fields)
+    @api.marshal_with(album)
     def put(self, album_id):
+        abort_if_album_doesnt_exist(album_id)
         args = parser.parse_args()
-        album = {'title': args['title'],
-                 'artist': args['artist'],
-                 'release': args['release'],
-                 }
-        ALBUMS[album_id] = album
-        js = json.dumps(album)
+        album_updated = {'title': args['title'],
+                         'artist': args['artist'],
+                         'release': args['release'],
+                        }
+        ALBUMS[album_id] = album_updated
+        js = json.dumps(album_updated)
         resp = Response(js, status=201, mimetype='application/json')
-        resp.headers['Access-Control-Allow-Origin'] = '*'
-        return album
+        return resp
