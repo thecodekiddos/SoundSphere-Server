@@ -15,7 +15,7 @@ Run the `pip install -r requirements.txt` for dependencies.
 
 Flask will be the RESTful API framework used for this Backend
 
-Set up your environement variable `APP_SETTINGS` for the deployment type: developement, test, production
+Set up your environement variable `FLASK_APP`:`soundsphere`, `APP_SETTINGS` for the deployment type: developement, test, production
 
 To run the server:
 `flask run`
