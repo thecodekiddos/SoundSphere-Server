@@ -23,6 +23,17 @@ When finished simply use:
 To run the server:
 `flask run`
 
+# Development
+
+Create your own virtual environment for the project `virtualenv ~/PATH_TO_MY_PROJECT/venv`
+
+Install the requirements `pip install -r requirements.txt`
+
+Before beginning any development activate the virtual environment with the command:
+`source venv/bin/activate`
+When finished simply use:
+`deactivate`
+
 # Deployment
 TBD
 
