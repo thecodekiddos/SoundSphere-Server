@@ -15,10 +15,7 @@ Run the `pip install -r requirements.txt` for dependencies.
 
 Flask will be the RESTful API framework used for this Backend
 
-Before beginning any development activate the virtual environment with the command:
-`source venv/bin/activate`
-When finished simply use:
-`deactivate`
+Set up your environement variable `APP_SETTINGS` for the deployment type: developement, test, production
 
 To run the server:
 `flask run`
