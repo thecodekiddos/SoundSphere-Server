@@ -11,7 +11,7 @@ Clone the repository locally
 
 Download [Python3](https://www.python.org/downloads/release/python-370/)
 
-Run the setup file `python setup.py install` for dependencies.
+Run the `pip install -r requirements.txt` for dependencies.
 
 Flask will be the RESTful API framework used for this Backend
 
@@ -27,12 +27,12 @@ To run the server:
 
 Create your own virtual environment for the project `virtualenv ~/PATH_TO_MY_PROJECT/venv`
 
-Install the requirements `pip install -r requirements.txt`
-
 Before beginning any development activate the virtual environment with the command:
 `source venv/bin/activate`
 When finished simply use:
 `deactivate`
+
+When adding additional modules to the project, commit the current state of the packages via: `pip freeze > requirements.txt`
 
 # Deployment
 TBD
