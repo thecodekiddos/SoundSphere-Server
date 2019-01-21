@@ -3,7 +3,8 @@ import os
 dirname = os.path.dirname(__file__)
 db_filename = os.path.join(dirname, 'test_db.db')
 
-if(os.environ.get('APP_SETTINGS') == 'dev'):
+
+if os.environ.get('APP_SETTINGS') == 'dev':
     DEBUG = True
     ENV = 'development'
     FLASK_ENV = 'development'
