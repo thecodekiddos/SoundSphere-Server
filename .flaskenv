@@ -1,2 +1,0 @@
-FLASK_APP=soundsphere
-FLASK_DEBUG=1

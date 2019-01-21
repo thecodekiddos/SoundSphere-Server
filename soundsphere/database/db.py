@@ -27,7 +27,7 @@ collection = db.Table('collection',
 
 class Album(db.Model):
     '''
-    This class defines how albums will be stored in the SQLite DB
+    This class defines how albums will be stored in the SQLite3 DB
     '''
     __tablename__ = 'albums'
 
@@ -42,7 +42,9 @@ class Album(db.Model):
 
 
 class User(db.Model):
-
+    '''
+    Defines the user class
+    '''
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -90,7 +92,7 @@ def _create_database():
     application.
     """
     app = Flask(__name__)
-    app.config.from_pyfile('../config.py')
+    app.config.from_pyfile('../../config.py')
     init_app(app)
     with app.app_context():
         db.create_all()
