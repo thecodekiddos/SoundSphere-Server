@@ -2,9 +2,7 @@
 # Edit at https://www.gitignore.io/?templates=flask,python
 
 ### Flask ###
-instance/*
-!instance/.gitignore
-.webassets-cache
+
 
 ### Flask.Python Stack ###
 # Byte-compiled / optimized / DLL files
@@ -18,7 +16,6 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
-develop-eggs/
 dist/
 downloads/
 eggs/
