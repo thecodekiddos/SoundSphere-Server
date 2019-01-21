@@ -1,6 +1,7 @@
 from flask import abort, Response, json, request
-from flask_restplus import Resource, reqparse, fields, Namespace, marshal
-from ..database.db import Album, db, get_album, add_album, get_all_albums, update_album, delete_album
+from flask_restplus import Resource, reqparse, Namespace
+from marshmallow import ValidationError, Schema, fields
+from ..database.db import get_album, add_album, get_all_albums, update_album, delete_album
 import copy
 
 api = Namespace('albums', description='Operations related to albums in collection')
@@ -15,13 +16,15 @@ parser.add_argument('barcode', help="Release of the album")
 parser.add_argument('catno', help="Release of the album")
 parser.add_argument('notes', help="Release of the album")
 
+
 # Resource fields - uses marshal with for data validation
-# album = api.model('Albums', {
-#     'title': fields.String,
-#     'artist': fields.String,
-#     # update below to be DateTime
-#     'release': fields.String
-# })
+class AlbumSchema(Schema):
+    title = fields.Str(required=True, error_messages={"required": "Title is required"})
+    artist = fields.Str(required=True, error_messages={"required": "Artist is required"})
+    year = fields.Integer()
+    barcode = fields.Str()
+    catno = fields.Str(required=True, error_messages={"required": "Catalogue number is required"})
+    notes = fields.Str()
 
 
 # Error handling
@@ -44,7 +47,7 @@ class Albums(Resource):
         if albums is None:
             return abort(404, message="No albums exist in this collection")
         js = json.dumps(albums)
-        resp = Response(js, status=200)
+        resp = Response(js, status=200, headers={'Access-Control-Allow-Origin': '*'})
         return resp
 
     @api.doc('post_albums')
@@ -52,13 +55,13 @@ class Albums(Resource):
         data = request.form.to_dict(flat=True)
         album_to_add = add_album(data)
         js = json.dumps(album_to_add)
-        resp = Response(js, status=201, mimetype='application/json')
+        resp = Response(js, status=201, mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
         return resp
 
 
 # Specifies a list of all albums
 @api.route('/<id>')
-@api.param('id', 'album identifier')
+@api.doc(params={'id': 'An album ID'})
 @api.response(404, 'Album not found')
 @api.header('Access-Control-Allow-Origin')
 class Album(Resource):
@@ -66,7 +69,7 @@ class Album(Resource):
     def get(self, id):
         album_from_db = get_album(id)
         js = json.dumps(album_from_db)
-        resp = Response(js, status=201, mimetype='application/json')
+        resp = Response(js, status=201, mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
         return resp
 
     @api.doc('delete_album_by_id')
@@ -84,5 +87,5 @@ class Album(Resource):
                 del update[k]
         album_to_update = update_album(update, id)
         js = json.dumps(album_to_update)
-        resp = Response(js, status=201, mimetype='application/json')
+        resp = Response(js, status=201, mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
         return resp
