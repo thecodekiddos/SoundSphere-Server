@@ -3,6 +3,7 @@ Welcome to the Soundsphere backend where the shared vinyl/LP collection of James
 
 # Getting Started
 The instructions below will get you up and running to develop the server and make a shared collection of your own!
+
 **INSTALLATION**
 
 Clone the repository locally
@@ -11,23 +12,25 @@ Clone the repository locally
 
 Download [Python3](https://www.python.org/downloads/release/python-370/)
 
-Run the `pip install -r requirements.txt` for dependencies.
+Ensure you have virtualenv downloaded through `pip install virutalenv`
 
-Flask will be the RESTful API framework used for this Backend
-
-Set up your environement variable `FLASK_APP`:`soundsphere`, `APP_SETTINGS` for the deployment type: developement, test, production
-
-To run the server:
-`flask run`
-
-# Development
-
-Create your own virtual environment for the project `virtualenv ~/PATH_TO_MY_PROJECT/venv`
+Create your own virtual environment for the project `virtualenv -p python3 ./venv`
 
 Before beginning any development activate the virtual environment with the command:
 `source venv/bin/activate`
 When finished simply use:
 `deactivate`
+
+Run the `pip install -r requirements.txt` for dependencies.
+
+Flask will be the RESTful API framework used for this Backend
+
+Set up your environement variable `export FLASK_APP=soundsphere`,`APP_SETTINGS=dev` for the deployment type: developement, production
+
+To run the server:
+`flask run`
+
+# Development
 
 When adding additional modules to the project, commit the current state of the packages via: `pip freeze > requirements.txt`
 
