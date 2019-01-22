@@ -1,6 +1,7 @@
 #!flask/bin/python
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
+from sqlalchemy.exc import IntegrityError
 
 db = SQLAlchemy()
 
@@ -34,7 +35,7 @@ class Album(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     title = db.Column(db.String(80), nullable=False)
     artist = db.Column(db.String(80), nullable=False)
-    year = db.Column(db.Integer, nullable=False)
+    year = db.Column(db.Integer)
     barcode = db.Column(db.String(80))
     catno = db.Column(db.String(80), nullable=False, unique=True)
     notes = db.Column(db.Text)
@@ -66,11 +67,21 @@ def get_album(id):
     return from_sql(result)
 
 
+def get_album_by_title(title):
+    result = Album.query.filter_by(title=title).first()
+    if not result:
+        return None
+    return from_sql(result)
+
+
 def add_album(data):
     album = Album(**data)
-    db.session.add(album)
-    db.session.commit()
-    return from_sql(album)
+    try:
+        db.session.add(album)
+        db.session.commit()
+        return from_sql(album)
+    except IntegrityError as err:
+        return err
 
 
 def delete_album(id):
