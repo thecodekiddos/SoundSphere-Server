@@ -1,12 +1,13 @@
 import os
 from flask import Flask
 from flask_restplus import Api
+from flask_migrate import Migrate
 
 
-def create_app(config, debug=False, testing=False):
+def create_app(debug=False, testing=False):
     # Create Flask App
     app = Flask(__name__)
-    app.config.from_object(config)
+    app.config.from_object(os.environ['APP_SETTINGS'])
     app.debug = debug
     app.testing = testing
 
@@ -14,6 +15,8 @@ def create_app(config, debug=False, testing=False):
     from soundsphere.database.db import db
     with app.app_context():
         db.init_app(app)
+
+    migrate = Migrate(app, db)
 
     # ensure the instance folder exists
     try:

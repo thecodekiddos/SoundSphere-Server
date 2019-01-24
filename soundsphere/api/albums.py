@@ -62,11 +62,12 @@ class Albums(Resource):
         return resp
 
     @api.doc('post_albums',
-             resonses={
+             responses={
                  200: 'Success',
                  400: 'Bad Request',
                  500: 'Internal Server Error'
              })
+    @api.expect(album_schema)
     def post(self):
         if not request.is_json:
             return Response(response={'Not valid json'}, status=400)
