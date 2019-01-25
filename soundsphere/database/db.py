@@ -1,7 +1,10 @@
 #!flask/bin/python
+import os
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from sqlalchemy.exc import IntegrityError
+from werkzeug.security import generate_password_hash, check_password_hash
+# from soundsphere import login
 
 db = SQLAlchemy()
 
@@ -19,6 +22,9 @@ def from_sql(row):
     return data
 
 
+'''
+Models/Tables
+'''
 # Shared helper table for user to albums
 collection = db.Table('collection',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
@@ -49,9 +55,19 @@ class User(db.Model):
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String)
-    email = db.Column(db.String)
-    password = db.Column(db.String)
+    username = db.Column(db.String(18))
+    email = db.Column(db.String(64), nullable=False)
+    password_hash = db.Column(db.String(64), nullable=False)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password, 'sha256')
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+'''
+Album Query Methods
+'''
 
 
 def get_all_albums():
@@ -97,13 +113,44 @@ def update_album(data, id):
     return from_sql(album)
 
 
+'''
+User Query Methods
+'''
+
+
+# @login.user_loader
+# def load_user(id):
+#     return User.query.get(int(id))
+
+
+def get_user_by_username(username):
+    result = User.query.filter_by(username=username).first()
+    if result is None:
+        return None
+    return result
+
+
+def add_user(data):
+    user = User(username=data['username'], email=data['email'])
+    try:
+        user.set_password(data['password'])
+        db.session.add(user)
+        db.session.commit()
+        return from_sql(user)
+    except IntegrityError as err:
+        return err
+'''
+Build database as a single script
+'''
+
+
 def _create_database():
     """
     If this script is run directly, create all the tables necessary to run the
     application.
     """
     app = Flask(__name__)
-    app.config.from_pyfile('../../config.py')
+    app.config.from_object(os.environ['APP_SETTINGS'])
     init_app(app)
     with app.app_context():
         db.create_all()
