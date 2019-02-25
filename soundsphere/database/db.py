@@ -4,9 +4,15 @@ from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
-# from soundsphere import login
+from flask_login import UserMixin, LoginManager
+from flask_dance.consumer.backend.sqla import OAuthConsumerMixin
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
+login = LoginManager()
+migrate = Migrate()
+
+login.login_view = 'discogs.login'
 
 albums_list = list
 
@@ -48,14 +54,14 @@ class Album(db.Model):
     user = db.relationship("User", secondary=collection, backref=db.backref("albums"))
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     '''
     Defines the user class
     '''
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(18))
+    username = db.Column(db.String(256), unique=True)
     email = db.Column(db.String(64), nullable=False)
     password_hash = db.Column(db.String(64), nullable=False)
 
@@ -64,6 +70,14 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+# class OAuth(OAuthConsumerMixin, db.Model):
+#     provider_user_id = db.Column(db.String(256), unique=True)
+#     user_id = db.Column(db.Integer, db.ForeignKey(User.id))
+#     user = db.relationship(User)
+#
+
 
 '''
 Album Query Methods
@@ -118,9 +132,9 @@ User Query Methods
 '''
 
 
-# @login.user_loader
-# def load_user(id):
-#     return User.query.get(int(id))
+@login.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 def get_user_by_username(username):

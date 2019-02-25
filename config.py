@@ -8,6 +8,8 @@ class BaseConfig(object):
     DEBUG = False
     SECRET_KEY = 'HV\xb7\xe1\x9f3/\x9c\xa3\xc2TY\xe7\x1b\x10\xd55\x1a\x8aL\x92*\x9a\xb2'
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db_filename
+    DISCOGS_KEY = os.environ['DISCOGS_KEY']
+    DISCOGS_SECRET = os.environ['DISCOGS_SECRET']
 
 
 class Development(BaseConfig):
@@ -24,3 +26,4 @@ class Production(BaseConfig):
     FLASK_ENV = 'production'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
+

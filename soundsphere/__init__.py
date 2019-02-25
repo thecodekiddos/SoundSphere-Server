@@ -1,12 +1,7 @@
 import os
-from flask import Flask
+from flask import Flask, redirect, url_for, flash, render_template
 from flask_restplus import Api
-from flask_migrate import Migrate
-from flask_login import LoginManager
-
-
-login = LoginManager()
-migrate = Migrate()
+from flask_login import logout_user, login_required
 
 
 def create_app(debug=False, testing=False, create_db=False):
@@ -17,7 +12,7 @@ def create_app(debug=False, testing=False, create_db=False):
     app.testing = testing
 
     # Create Database
-    from soundsphere.database.db import db
+    from soundsphere.database.db import db, migrate, login
     with app.app_context():
         db.init_app(app)
         migrate.init_app(app, db)
@@ -36,8 +31,36 @@ def create_app(debug=False, testing=False, create_db=False):
     # Create Routes
     from .api.albums import api as album_api
     from .api.users import api as user_api
+    # from .api.discogs import api as discogs_api
     api = Api(app, version='1.0.0', title='SoundSphere', description='A collection of shared records.')
     api.add_namespace(album_api)
     api.add_namespace(user_api)
+    # api.add_namespace(discogs_api)
+
+    # from .api.discogs import discogs_blueprint
+    # app.register_blueprint(discogs_blueprint, url_prefix="/login")
+
+    # @app.route('/discogs')
+    # def discogs_login():
+    #     if not discogs_blueprint.session.authorized:
+    #         return redirect(url_for('discogs.login'))
+    #     account = discogs_blueprint.session.get('oauth/identity')
+    #
+    #     if account.ok:
+    #         account_json = account.json()
+    #
+    #         return '<h1> You Discogs username is @{}'.format(account['username'])
+    #     return '<h1> Request failed! </h1>'
+    # #
+    @app.route("/logout")
+    @login_required
+    def logout():
+        logout_user()
+        flash("You have logged out")
+        return redirect(url_for("index"))
+
+    @app.route("/home")
+    def index():
+        return render_template("home.html")
 
     return app
