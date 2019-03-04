@@ -35,23 +35,7 @@ def create_app(debug=False, testing=False, create_db=False):
     api = Api(app, version='1.0.0', title='SoundSphere', description='A collection of shared records.')
     api.add_namespace(album_api)
     api.add_namespace(user_api)
-    # api.add_namespace(discogs_api)
 
-    # from .api.discogs import discogs_blueprint
-    # app.register_blueprint(discogs_blueprint, url_prefix="/login")
-
-    # @app.route('/discogs')
-    # def discogs_login():
-    #     if not discogs_blueprint.session.authorized:
-    #         return redirect(url_for('discogs.login'))
-    #     account = discogs_blueprint.session.get('oauth/identity')
-    #
-    #     if account.ok:
-    #         account_json = account.json()
-    #
-    #         return '<h1> You Discogs username is @{}'.format(account['username'])
-    #     return '<h1> Request failed! </h1>'
-    # #
     @app.route("/logout")
     @login_required
     def logout():
