@@ -49,6 +49,40 @@ class Users(Resource):
             return Response(response={"User with username: '" + username + "' already exists"}, status=400)
 
 
+@api.route('/login')
+@api.header('Access-Control-Allow-Origin')
+class UsersLogin(Resource):
+    def post(self):
+        if current_user.is_authenticated:
+            return url_for("/")
+        json_data = request.get_json()
+        username = json_data['username']
+        password = json_data['password']
+        user = get_user_by_username(username)
+        if not user or not user.check_password(password):
+            return Response(response={'Invalid username or password'}, status=400, headers={'Access-Control-Allow-Origin': '*'})
+        login_user(user)
+        return Response('Login successful', status=204, mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
+
+
+@api.route('/logout')
+@api.header('Access-Control-Allow-Origin')
+# @login_required
+class UsersLogout(Resource):
+    def post(self):
+        logout_user()
+        return Response('Logout successful', status=204, mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
+
+
+@api.route('/<id>')
+@api.doc(params={'id': 'A user ID'})
+@api.response(404, 'User not found')
+@api.header('Access-Control-Allow-Origin')
+class User(Resource):
+    def get(self):
+        return ''
+
+
 # @api.route('/login')
 # def login():
 #     return discogs.authorize(callback=url_for('oauth_authorized', next=request.args.get('next') or request.referrer or None))
@@ -70,37 +104,3 @@ class Users(Resource):
 #
 #     flash('You were signed in as %s' % resp['user_name'])
 #     return redirect(next_url)
-
-
-@api.route('/login')
-@api.header('Access-Control-Allow-Origin')
-class UsersLogin(Resource):
-    def post(self):
-        if current_user.is_authenticated:
-            return url_for("/")
-        json_data = request.get_json()
-        username = json_data['username']
-        password = json_data['password']
-        user = get_user_by_username(username)
-        if not user or not user.check_password(password):
-            return Response(response={'Invalid username or password'}, status=400, headers={'Access-Control-Allow-Origin': '*'})
-        login_user(user)
-        return Response('Login successful', status=204, mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
-
-
-@api.route('/logout')
-@api.header('Access-Control-Allow-Origin')
-@login_required
-class UsersLogout(Resource):
-    def post(self):
-        logout_user()
-        return Response('Logout successful', status=204, mimetype='application/json', headers={'Access-Control-Allow-Origin': '*'})
-
-
-@api.route('/<id>')
-@api.doc(params={'id': 'A user ID'})
-@api.response(404, 'User not found')
-@api.header('Access-Control-Allow-Origin')
-class User(Resource):
-    def get(self):
-        return ''
