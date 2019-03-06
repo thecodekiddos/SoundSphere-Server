@@ -7,7 +7,7 @@ db_filename = os.path.join(dirname, 'test_db.db')
 class BaseConfig(object):
     DEBUG = False
     SECRET_KEY = os.environ['SECRET_KEY']
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + db_filename
+    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     DISCOGS_KEY = os.environ['DISCOGS_KEY']
     DISCOGS_SECRET = os.environ['DISCOGS_SECRET']
 

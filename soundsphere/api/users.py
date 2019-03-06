@@ -82,11 +82,11 @@ class User(Resource):
     def get(self):
         return ''
 
-
+#
 # @api.route('/login')
 # def login():
 #     return discogs.authorize(callback=url_for('oauth_authorized', next=request.args.get('next') or request.referrer or None))
-
+#
 
 # @api.route('/oauth-authorized')
 # @discogs.authorized_handler

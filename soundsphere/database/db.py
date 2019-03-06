@@ -170,6 +170,20 @@ def _create_database():
         db.create_all()
     print("All tables created")
 
+def _drop_database():
+    """
+    If this script is run directly, drop all the tables necessary to run the
+    application.
+    """
+    app = Flask(__name__)
+    app.config.from_object(os.environ['APP_SETTINGS'])
+    init_app(app)
+    with app.app_context():
+        db.drop_all()
+    print("All tables dropped")
 
-if __name__ == '__main__':
-    _create_database()
+
+
+#
+# if __name__ == '__main__':
+#     _create_database()

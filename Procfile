@@ -1,1 +1,1 @@
-web: gunicorn soundsphere:create_app
+web: gunicorn "soundsphere:create_app()"

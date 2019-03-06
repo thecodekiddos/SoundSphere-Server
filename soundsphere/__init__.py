@@ -35,6 +35,7 @@ def create_app(debug=False, testing=False, create_db=False):
     api = Api(app, version='1.0.0', title='SoundSphere', description='A collection of shared records.')
     api.add_namespace(album_api)
     api.add_namespace(user_api)
+    # api.add_namespace(discogs_api)
 
     @app.route("/logout")
     @login_required
